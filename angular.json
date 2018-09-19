@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ng-alain": {
+    "ng-alain-cookie": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -62,14 +62,16 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ng-alain:build"
+
+            "browserTarget": "ng-alain-cookie:build",
+            "proxyConfig":"proxy.conf.json"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ng-alain:build:production"
+              "browserTarget": "ng-alain-cookie:build:production"
             },
             "hmr": {
-              "browserTarget": "ng-alain:build:hmr",
+              "browserTarget": "ng-alain-cookie:build:hmr",
               "hmr": true
             }
           }
@@ -77,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ng-alain:build"
+            "browserTarget": "ng-alain-cookie:build"
           }
         },
         "test": {
@@ -124,7 +126,7 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "ng-alain:serve"
+            "devServerTarget": "ng-alain-cookie:serve"
           }
         },
         "lint": {
@@ -141,5 +143,5 @@
       }
     }
   },
-  "defaultProject": "ng-alain"
+  "defaultProject": "ng-alain-cookie"
 }
