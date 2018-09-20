@@ -20,11 +20,13 @@ import { UserLockComponent } from './passport/lock/lock.component';
 import { Exception403Component } from './exception/403.component';
 import { Exception404Component } from './exception/404.component';
 import { Exception500Component } from './exception/500.component';
+import {SimpleGuard} from "@delon/auth";
 
 const routes: Routes = [
   {
     path: '',
     component: LayoutDefaultComponent,
+    canActivateChild: [SimpleGuard],
     children: [
       { path: '', redirectTo: 'dashboard/v1', pathMatch: 'full' },
       { path: 'dashboard', redirectTo: 'dashboard/v1', pathMatch: 'full' },
