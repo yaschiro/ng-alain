@@ -9,6 +9,12 @@ import {
   TitleService,
   ALAIN_I18N_TOKEN,
 } from '@delon/theme';
+import {
+  DA_SERVICE_TOKEN,
+
+  TokenService
+
+} from '@delon/auth';
 import { ACLService } from '@delon/acl';
 import { TranslateService } from '@ngx-translate/core';
 import { I18NService } from '../i18n/i18n.service';
@@ -28,55 +34,56 @@ export class StartupService {
     private titleService: TitleService,
     private httpClient: HttpClient,
     private injector: Injector,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
   ) {}
- /* private viaMock(resolve: any, reject: any) {
-    const tokenData = this.tokenService.get();
-    if (!tokenData.token) {
-      this.injector.get(Router).navigateByUrl('/passport/login');
-      resolve({});
-      return;
-    }
-    // mock
-    const app: any = {
-      name: `ng-alain`,
-      description: `Ng-zorro admin panel front-end framework`
-    };
-    const user: any = {
-      name: 'Admin',
-      avatar: './assets/tmp/img/avatar.jpg',
-      email: 'cipchk@qq.com',
-      token: '123456789'
-    };
-    // 应用信息：包括站点名、描述、年份
-    this.settingService.setApp(app);
-    // 用户信息：包括姓名、头像、邮箱地址
-    this.settingService.setUser(user);
-    // ACL：设置权限为全量
-    this.aclService.setFull(true);
-    // 初始化菜单
-    this.menuService.add([
-      {
-        text: '主导航',
-        group: true,
-        children: [
-          {
-            text: '仪表盘',
-            link: '/dashboard',
-            icon: 'anticon anticon-appstore-o'
-          },
-          {
-            text: '快捷菜单',
-            icon: 'anticon anticon-rocket',
-            shortcutRoot: true
-          }
-        ]
-      }
-    ]);
-    // 设置页面标题的后缀
-    this.titleService.suffix = app.name;
+  /* private viaMock(resolve: any, reject: any) {
+     const tokenData = this.tokenService.get();
+     if (!tokenData.token) {
+       this.injector.get(Router).navigateByUrl('/passport/login');
+       resolve({});
+       return;
+     }
+     // mock
+     const app: any = {
+       name: `ng-alain`,
+       description: `Ng-zorro admin panel front-end framework`
+     };
+     const user: any = {
+       name: 'Admin',
+       avatar: './assets/tmp/img/avatar.jpg',
+       email: 'cipchk@qq.com',
+       token: '123456789'
+     };
+     // 应用信息：包括站点名、描述、年份
+     this.settingService.setApp(app);
+     // 用户信息：包括姓名、头像、邮箱地址
+     this.settingService.setUser(user);
+     // ACL：设置权限为全量
+     this.aclService.setFull(true);
+     // 初始化菜单
+     this.menuService.add([
+       {
+         text: '主导航',
+         group: true,
+         children: [
+           {
+             text: '仪表盘',
+             link: '/dashboard',
+             icon: 'anticon anticon-appstore-o'
+           },
+           {
+             text: '快捷菜单',
+             icon: 'anticon anticon-rocket',
+             shortcutRoot: true
+           }
+         ]
+       }
+     ]);
+     // 设置页面标题的后缀
+     this.titleService.suffix = app.name;
 
-    resolve({});
-  }*/
+     resolve({});
+   }*/
 
 
   load(): Promise<any> {
@@ -86,6 +93,7 @@ export class StartupService {
       zip(
         this.httpClient.get(`/assets/tmp/i18n/${this.i18n.defaultLang}.json`),
         this.httpClient.get('/assets/tmp/app-data.json'),
+
       )
         .pipe(
           // 接收其他拦截器后产生的异常消息
@@ -104,14 +112,35 @@ export class StartupService {
             const res: any = appData;
             // 应用信息：包括站点名、描述、年份
             this.settingService.setApp(res.app);
-            // 用户信息：包括姓名、头像、邮箱地址
-            this.settingService.setUser(res.user);
+
             // ACL：设置权限为全量
             this.aclService.setFull(true);
-            // 初始化菜单
-            this.menuService.add(res.menu);
             // 设置页面标题的后缀
             this.titleService.suffix = res.app.name;
+            const tokenData = this.tokenService.get();
+            if (!tokenData.token) {
+              this.injector.get(Router).navigateByUrl('/passport/login');
+              resolve({});
+              return;
+            }else{
+              this.httpClient.get('sys/users/info').subscribe((res: any) => {
+                console.log(res);
+                // 用户信息：包括姓名、头像、邮箱地址
+                this.settingService.setUser(res.result.user);
+                // 初始化菜单
+                this.menuService.add(res.result.menu);
+              });
+
+            }
+
+
+
+
+
+
+
+
+
           },
           () => {},
           () => {
