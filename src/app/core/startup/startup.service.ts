@@ -92,7 +92,7 @@ export class StartupService {
     return new Promise((resolve, reject) => {
       zip(
         this.httpClient.get(`/assets/tmp/i18n/${this.i18n.defaultLang}.json`),
-        this.httpClient.get('/assets/tmp/app-data.json'),
+        this.httpClient.get('api/appdata'),
 
       )
         .pipe(
@@ -111,12 +111,12 @@ export class StartupService {
             // application data
             const res: any = appData;
             // 应用信息：包括站点名、描述、年份
-            this.settingService.setApp(res.app);
+            this.settingService.setApp(res.result );
 
             // ACL：设置权限为全量
             this.aclService.setFull(true);
             // 设置页面标题的后缀
-            this.titleService.suffix = res.app.name;
+            this.titleService.suffix = res.result.name;
             const tokenData = this.tokenService.get();
             if (!tokenData.token) {
               this.injector.get(Router).navigateByUrl('/passport/login');
